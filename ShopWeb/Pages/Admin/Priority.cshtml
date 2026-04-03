@@ -1,0 +1,61 @@
+@page
+@model ShopWeb.Pages.Admin.PriorityModel
+@{
+    ViewData["Title"] = "Verification queue";
+}
+
+<div class="app-shell mb-4">
+    <p class="page-eyebrow mb-0">Fraud operations</p>
+    <h1 class="page-title h3 mb-2">Verification queue</h1>
+    <p class="text-muted mb-1">Orders sorted by <strong>risk score</strong> (highest first) so your team reviews the most suspicious activity before fulfillment.</p>
+    <p class="small text-secondary mb-0">Run scoring after new orders arrive to refresh rankings. The model file is deployed as <code class="small">MLModels/fraud_model.zip</code>.</p>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Flash))
+{
+    <div class="alert alert-success border-0 shadow-sm mb-4" role="status">@Model.Flash</div>
+}
+
+<div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+    <form method="post" asp-page-handler="RunScoring" class="m-0">
+        <button type="submit" class="btn btn-warning px-4 fw-semibold">Run scoring</button>
+    </form>
+    <span class="text-muted small">Applies the fraud model to all orders and updates risk scores.</span>
+</div>
+
+<div class="table-responsive app-shell p-0 overflow-hidden">
+    <table class="table table-sm table-hover table-professional mb-0">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Order</th>
+                <th scope="col">Placed</th>
+                <th scope="col">Customer</th>
+                <th scope="col" class="text-end">Total</th>
+                <th scope="col" class="text-end">Risk score</th>
+                <th scope="col">Training label</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var o in Model.Queue)
+        {
+            <tr>
+                <td class="font-monospace text-secondary">#@o.OrderId</td>
+                <td class="text-nowrap">@o.OrderDateTime</td>
+                <td>@o.CustomerName</td>
+                <td class="text-end">@o.OrderTotal.ToString("C2")</td>
+                <td class="text-end"><span class="fw-semibold">@o.RiskScore.ToString("F1")</span></td>
+                <td>
+                    @if (o.IsFraud)
+                    {
+                        <span class="badge rounded-pill text-bg-danger">Fraud</span>
+                    }
+                    else
+                    {
+                        <span class="badge rounded-pill text-bg-secondary">Legitimate</span>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

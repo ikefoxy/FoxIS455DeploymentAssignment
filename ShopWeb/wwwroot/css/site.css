@@ -1,0 +1,111 @@
+html {
+  font-size: 15px;
+  position: relative;
+  min-height: 100%;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  margin-bottom: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bs-gray-100);
+  color: #1a1d21;
+  letter-spacing: 0.01em;
+}
+
+main[role="main"] {
+  flex: 1 0 auto;
+}
+
+.app-shell {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  padding: 1.75rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .app-shell {
+    padding: 2rem 2rem;
+  }
+}
+
+.page-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bs-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.page-title {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #111418;
+}
+
+.letter-spacing {
+  letter-spacing: 0.06em;
+}
+
+.table-professional thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary);
+  border-bottom-width: 1px;
+  white-space: nowrap;
+}
+
+.table-professional td {
+  vertical-align: middle;
+}
+
+.site-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 1rem 0;
+  font-size: 0.875rem;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.navbar-brand .brand-sub {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 0.1rem;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.2rem rgba(13, 110, 253, 0.35);
+}
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}

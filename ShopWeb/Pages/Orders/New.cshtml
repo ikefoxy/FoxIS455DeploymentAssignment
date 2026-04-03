@@ -1,0 +1,117 @@
+@page
+@model ShopWeb.Pages.Orders.NewModel
+@{
+    ViewData["Title"] = "New order";
+}
+
+@if (Model.Customer is null)
+{
+    <div class="app-shell">
+        <p class="text-danger mb-0">We could not find that customer. Return to the list and try again.</p>
+        <a class="btn btn-outline-primary mt-3" asp-page="/Customers/Index">Back to customers</a>
+    </div>
+    return;
+}
+
+<div class="app-shell mb-4">
+    <p class="page-eyebrow mb-0">Checkout</p>
+    <h1 class="page-title h3 mb-1">New order</h1>
+    <p class="lead text-muted mb-0">@Model.Customer!.Value.FullName</p>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info border-0 shadow-sm mb-4" role="status">@Model.StatusMessage</div>
+}
+
+<form method="post" asp-route-customerId="@Model.CustomerId" class="order-form">
+    <div class="app-shell mb-4">
+        <h2 class="h6 text-secondary text-uppercase letter-spacing mb-3">Checkout details</h2>
+        <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label fw-semibold" asp-for="PaymentMethod"></label>
+            <select asp-for="PaymentMethod" class="form-select">
+                <option value="card">Credit or debit card</option>
+                <option value="paypal">PayPal</option>
+                <option value="bank">Bank transfer (ACH / wire)</option>
+                <option value="crypto">Cryptocurrency</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold" asp-for="DeviceType"></label>
+            <select asp-for="DeviceType" class="form-select">
+                <option value="mobile">Mobile</option>
+                <option value="desktop">Desktop</option>
+                <option value="tablet">Tablet</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold" asp-for="IpCountry"></label>
+            <input asp-for="IpCountry" class="form-control text-uppercase" maxlength="8" placeholder="e.g. US" />
+            <div class="form-text">Two-letter country code.</div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold" asp-for="BillingZip"></label>
+            <input asp-for="BillingZip" class="form-control" placeholder="Optional" autocomplete="postal-code" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold" asp-for="ShippingZip"></label>
+            <input asp-for="ShippingZip" class="form-control" placeholder="Optional" autocomplete="shipping postal-code" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold" asp-for="ShippingState"></label>
+            <input asp-for="ShippingState" class="form-control text-uppercase" maxlength="8" placeholder="e.g. CO" />
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <div class="form-check mb-2">
+                <input asp-for="PromoUsedBool" class="form-check-input" />
+                <label class="form-check-label fw-semibold" asp-for="PromoUsedBool"></label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold" asp-for="PromoCode"></label>
+            <input asp-for="PromoCode" class="form-control" placeholder="If applicable" autocomplete="off" />
+        </div>
+        </div>
+    </div>
+
+    <div class="app-shell mb-4">
+        <h2 class="h6 text-secondary text-uppercase letter-spacing mb-2">Line items</h2>
+        <p class="text-muted small mb-3">Add one product per row. Leave unused rows blank.</p>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-professional align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col" style="width:8rem">Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @for (var i = 0; i < Model.Lines.Length; i++)
+                {
+                    <tr>
+                        <td>
+                            <select name="Lines[@i].ProductId" class="form-select">
+                                <option value="0">Select product…</option>
+                                @foreach (var p in Model.Products)
+                                {
+                                    <option value="@p.ProductId">@p.ProductName — @p.Sku (@p.Price.ToString("C2"))</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input name="Lines[@i].Quantity" class="form-control" type="number" min="0" value="0" inputmode="numeric" />
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-success px-4 fw-semibold">Place order</button>
+        <a class="btn btn-outline-secondary" asp-page="/Customers/Index">Cancel</a>
+    </div>
+</form>

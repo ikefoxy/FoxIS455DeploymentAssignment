@@ -1,0 +1,26 @@
+@page
+@model ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="app-shell">
+    <h1 class="page-title h4 text-danger mb-2">Something went wrong</h1>
+    <p class="text-muted mb-4">We could not complete that request. Please try again, or contact your administrator if the problem continues.</p>
+
+    @if (Model.ShowRequestId)
+    {
+        <p class="small mb-0"><span class="text-secondary">Reference:</span> <code>@Model.RequestId</code></p>
+    }
+</div>
+
+@if (Model.ShowDevelopmentDetails)
+{
+    <div class="app-shell mt-4 border border-warning border-opacity-50">
+        <h2 class="h6 text-warning-emphasis">Development environment</h2>
+        <p class="small text-muted mb-0">
+            Detailed errors are available when <code>ASPNETCORE_ENVIRONMENT</code> is set to <strong>Development</strong>.
+            Do not use Development settings in production.
+        </p>
+    </div>
+}

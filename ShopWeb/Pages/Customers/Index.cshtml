@@ -1,0 +1,37 @@
+@page
+@model ShopWeb.Pages.Customers.IndexModel
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<div class="app-shell mb-4">
+    <p class="page-eyebrow mb-0">Checkout</p>
+    <h1 class="page-title h3 mb-2">Choose a customer</h1>
+    <p class="text-muted mb-0">No sign-in required. Select a customer to start a new order.</p>
+</div>
+
+<div class="table-responsive app-shell p-0 overflow-hidden">
+    <table class="table table-hover table-professional mb-0">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Location</th>
+                <th scope="col" class="text-end" style="width:9rem">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var c in Model.Customers)
+        {
+            <tr>
+                <td class="fw-medium">@c.FullName</td>
+                <td><a class="link-dark text-decoration-none" href="mailto:@c.Email">@c.Email</a></td>
+                <td class="text-secondary">@(c.City is null && c.State is null ? "—" : $"{c.City}, {c.State}")</td>
+                <td class="text-end">
+                    <a class="btn btn-primary btn-sm px-3" asp-page="/Orders/New" asp-route-customerId="@c.CustomerId">New order</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

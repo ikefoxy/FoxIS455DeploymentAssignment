@@ -1,0 +1,13 @@
+# Deploy like Vercel: connect GitHub → Render creates this service from the Dockerfile.
+# Dashboard: https://dashboard.render.com → New + → Web Service → select this repo.
+
+services:
+  - type: web
+    name: is455-shopweb
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production

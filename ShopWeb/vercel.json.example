@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "Program.cs", "use": "@vercel/dotnet" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "Program.cs" }
+  ]
+}
