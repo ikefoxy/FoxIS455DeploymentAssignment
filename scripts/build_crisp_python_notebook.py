@@ -37,21 +37,22 @@ cells = []
 cells.append(
     md(
         """
-# IS455 — Part 2: CRISP-DM pipeline for `is_fraud` (Python)
+# IS455 — Part 2: CRISP-DM pipeline for `is_fraud` (single deliverable)
 
-**Course:** Machine Learning in Python (IS 455) — **Chapter 17 deployment integration**
+**Course:** Machine Learning in Python (IS 455) — rubric: business understanding → data understanding → preparation → modeling (classification + ensembles) → evaluation & tuning → feature selection → **serialization & deployment (Ch. 17)**.
 
-This notebook builds an end-to-end **classification** pipeline on **`shop.db`** (`orders` + `customers`), predicting **`orders.is_fraud`**.
+This is the **only** fraud-model notebook in the repo. It builds an end-to-end **binary classifier** on **`shop.db`**: join **`orders`** + **`customers`**, predict **`orders.is_fraud`**.
 
-**Environment:** Python 3.10+ with `pandas`, `scikit-learn`, `matplotlib`, `seaborn`, and the standard library `sqlite3` module (no SQLAlchemy required for loading `shop.db`).
+**Data source for training:** Local SQLite (`ShopWeb/Data/shop.db`, `web/data/shop.db`, or `Data/shop.db`). The **same schema** applies when the live app uses **Turso** (see §7).
+
+**Environment:** Python 3.10+ with `pandas`, `scikit-learn`, `matplotlib`, `seaborn`, and stdlib `sqlite3` (no SQLAlchemy required to read `shop.db`).
 
 ```bash
 # From the repository root:
 pip install -r Notebooks/requirements.txt
 ```
-(Or: `pip install pandas scikit-learn matplotlib seaborn joblib`.)
 
-Open this file in **Jupyter**, **VS Code**, or **Google Colab** (upload `shop.db` or mount Drive).
+Open in **Jupyter**, **VS Code**, or **Colab** (upload `shop.db` next to the notebook or use a copy from this repo). **Before submitting:** run **Run All** so every cell has outputs.
 """
     )
 )
@@ -224,7 +225,9 @@ cells.append(
 
 **Ch. 7 — Automated preparation:** sklearn `Pipeline` + `ColumnTransformer` so training and deployment share **one** reproducible workflow.
 
-**Feature set:** categoricals (one-hot) + numeric (scaled). **`risk_score`** excluded. **`promo_code`** omitted (high cardinality / sparse); could be engineered separately.
+**Feature engineering (this notebook):** `order_hour` and `order_dow` derived from `order_datetime` (timing patterns often matter for fraud).
+
+**Feature set:** categoricals (one-hot) + numeric (scaled). **`risk_score`** excluded (leakage). **`promo_code`** omitted (high cardinality); extend as needed.
 """
     )
 )
@@ -432,11 +435,26 @@ print("Features kept after selection:", int(selected_support.sum()), "/", len(se
 cells.append(
     md(
         """
-## 7) Deployment — model serialization (Ch. 17)
+## 7) Deployment — serialization & connection to Vercel + Turso (Ch. 17)
 
-Ship **one `Pipeline` object** (preprocessing + estimator) with **`joblib`**. Your web app or batch job loads the artifact and calls **`predict` / `predict_proba`** on new rows with the **same columns**.
+### Serialized artifact (this notebook)
 
-Optional: convert to **ONNX** for cross-language inference (e.g., .NET); optional register in a model registry for CI/CD.
+We save **one sklearn `Pipeline`** (preprocessing + tuned estimator) with **`joblib`** as:
+
+`ShopWeb/MLModels/fraud_sklearn_pipeline.joblib`
+
+Load in Python with `joblib.load`, then call **`predict_proba`** on a DataFrame with the **same feature columns** as training (after any offline feature engineering you add).
+
+### How this ties to your deployed site (`web/` on Vercel)
+
+| Piece | Role |
+|-------|------|
+| **Turso (libSQL)** | Production DB: set **`TURSO_DATABASE_URL`** and **`TURSO_AUTH_TOKEN`** in Vercel → Settings → Environment Variables. Tables **`orders`** / **`customers`** match the SQLite file used here, so training features align with live rows. |
+| **Next.js app** | Serves the shop UI, admin history, and **Verification queue** (orders sorted by **`risk_score`**). |
+| **Run scoring** | Server action updates **`orders.risk_score`** in the database so the queue reflects current risk. On Vercel, scoring uses the **TypeScript heuristic** in `web/src/lib/scoring.ts` (Node cannot load Python `joblib` on the edge). |
+| **This trained model** | **Chapter 17 ML artifact:** batch/offline scoring, periodic retraining on refreshed exports, or future **ONNX** / Python API — same fraud problem the site operationalizes via **`risk_score`** and priority ordering. |
+
+**Submit for the assignment:** upload this **one** `.ipynb` file with all cells run (outputs visible).
 """
     )
 )
@@ -469,9 +487,9 @@ cells.append(
 | Modeling | Logistic regression, Random Forest, Gradient Boosting |
 | Evaluation / tuning | Metrics, ROC, confusion matrix, `GridSearchCV` |
 | Feature selection | `SelectFromModel` (median threshold) |
-| Deployment | `joblib` pipeline artifact under `ShopWeb/MLModels/` |
+| Deployment | `joblib` → `ShopWeb/MLModels/fraud_sklearn_pipeline.joblib`; live site uses Turso + heuristic scoring on Vercel; schema matches training DB |
 
-**Next steps in production:** monitor drift, calibrate thresholds for cost-sensitive decisions, and wire this artifact (or ONNX) into the deployment pipeline from Chapter 17.
+**Next steps:** drift monitoring, threshold tuning for queue capacity, optional ONNX for cross-runtime inference.
 """
     )
 )

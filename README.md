@@ -9,14 +9,14 @@ The **`web/`** folder is a **Next.js 15** app that implements the same shop flow
 3. For **production**, add a **Turso** (libSQL) database and set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in Vercel → Environment Variables (file-based SQLite is not reliable for writes on serverless). See **`web/README.md`** for details.
 4. Run **`npm install`** locally inside `web/` before pushing if you add dependencies.
 
-The original **C# / ASP.NET** app remains in **`ShopWeb/`** for local development and coursework Part 2 (ML.NET notebook).
+The original **C# / ASP.NET** app in **`ShopWeb/`** is optional for local runs and **ML.NET** training (`dotnet run -- --train-model` → `fraud_model.zip`).
 
 ---
 
-This repo satisfies **Chapter 17: Deploying ML Pipelines** using **C#** end-to-end for the notebook and training pipeline, and **Next.js** for the Vercel-hosted web UI:
+This repo satisfies **Chapter 17: Deploying ML Pipelines** with a **Python/sklearn** Part 2 notebook, **Next.js** on Vercel, and optional **ShopWeb** + ML.NET:
 
-- **Part 1 — Web app (`ShopWeb/`):** Razor Pages + SQLite `shop.db` + ML.NET inference that updates `orders.risk_score` and the administrator **priority queue**.
-- **Part 2 — Notebook (`Notebooks/IS455_Fraud_CRISP_DM.ipynb`):** CRISP-DM workflow in **C#** via **ML.NET** (requires the Polyglot Notebooks / .NET Interactive kernel).
+- **Part 1 — Web:** **`web/`** (Vercel + Turso) or **`ShopWeb/`** (local .NET + SQLite) — orders, admin, **verification queue** sorted by `risk_score`.
+- **Part 2 — Notebook:** **`Notebooks/IS455_Fraud_CRISP_DM.ipynb`** only — CRISP-DM + `joblib` pipeline (`fraud_sklearn_pipeline.joblib`).
 
 ## Run the site locally
 
@@ -49,9 +49,9 @@ This writes `ShopWeb/MLModels/fraud_model.zip` (same pipeline family as the note
 2. Open `Notebooks/IS455_Fraud_CRISP_DM.ipynb` in Jupyter or VS Code.
 3. **Run all cells** top-to-bottom (uses `ShopWeb/Data/shop.db` or `Data/shop.db` by path). The final cells save a **`joblib`** pipeline to `ShopWeb/MLModels/fraud_sklearn_pipeline.joblib` for deployment (**Ch. 17**).
 
-**Regenerate the notebook JSON after edits:** `python scripts/build_crisp_python_notebook.py`
-
-**Optional — C# / ML.NET version:** `Notebooks/IS455_Fraud_CRISP_DM_MLNET.ipynb` (Polyglot / .NET Interactive). Regenerate via `python scripts/gen_notebook.py`.
+**Regenerate the `.ipynb` after editing the generator:** `python scripts/build_crisp_python_notebook.py`  
+**Refresh executed outputs (for submission):** run **Run All** in Jupyter, or:  
+`cd Notebooks && jupyter nbconvert --to notebook --execute IS455_Fraud_CRISP_DM.ipynb --inplace` (requires `pip install jupyter nbconvert`).
 
 ## Deploying — Vercel and this project
 
