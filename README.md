@@ -41,13 +41,17 @@ dotnet run -- --train-model
 
 This writes `ShopWeb/MLModels/fraud_model.zip` (same pipeline family as the notebook and `ML/FraudMlPipeline.cs`). If the zip is missing at runtime, **Run Scoring** falls back to a small heuristic so the UI still works.
 
-## Part 2 notebook (.ipynb)
+## Part 2 notebook (.ipynb) — CRISP-DM / `is_fraud`
 
-1. Install [Polyglot Notebooks](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.dotnet-interactive-vscode) (or Jupyter + .NET Interactive).
-2. Open `Notebooks/IS455_Fraud_CRISP_DM.ipynb`.
-3. Run all cells top-to-bottom; the last cell overwrites `ShopWeb/MLModels/fraud_model.zip`.
+**Submit:** `Notebooks/IS455_Fraud_CRISP_DM.ipynb` (Python / **pandas + scikit-learn**), aligned with textbook-style workflows (EDA, pipelines, classification, ensembles, tuning, feature selection, serialization).
 
-> The generator script lives at `scripts/gen_notebook.py` if you need to regenerate the `.ipynb` after edits.
+1. Create a venv and install deps: `pip install -r Notebooks/requirements.txt`
+2. Open `Notebooks/IS455_Fraud_CRISP_DM.ipynb` in Jupyter or VS Code.
+3. **Run all cells** top-to-bottom (uses `ShopWeb/Data/shop.db` or `Data/shop.db` by path). The final cells save a **`joblib`** pipeline to `ShopWeb/MLModels/fraud_sklearn_pipeline.joblib` for deployment (**Ch. 17**).
+
+**Regenerate the notebook JSON after edits:** `python scripts/build_crisp_python_notebook.py`
+
+**Optional — C# / ML.NET version:** `Notebooks/IS455_Fraud_CRISP_DM_MLNET.ipynb` (Polyglot / .NET Interactive). Regenerate via `python scripts/gen_notebook.py`.
 
 ## Deploying — Vercel and this project
 
