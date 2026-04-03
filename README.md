@@ -4,9 +4,10 @@
 
 The **`web/`** folder is a **Next.js 15** app that implements the same shop flows (customers, new order, admin history, verification queue + scoring) and deploys cleanly on Vercel.
 
-1. Import this repo in Vercel and set **Root Directory** to **`web`**.
-2. For **production**, add a **Turso** (libSQL) database and set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in Vercel → Environment Variables (file-based SQLite is not reliable for writes on serverless). See **`web/README.md`** for details.
-3. Run **`npm install`** locally inside `web/` before pushing if you add dependencies.
+1. Import this repo in Vercel. The repo includes a root **`vercel.json`** that runs **`npm ci`** and **`next build`** inside **`web/`**, so you can leave **Root Directory** as **`./`** and set **Framework Preset** to **Next.js** (or leave auto-detect after push).
+2. **If the UI lets you set it**, **Root Directory → `web`** is still the cleanest option. If the field is missing on the first screen: open your project → **Settings** → **General** → **Root Directory** → **Edit** → enter **`web`** → save, then redeploy.
+3. For **production**, add a **Turso** (libSQL) database and set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in Vercel → Environment Variables (file-based SQLite is not reliable for writes on serverless). See **`web/README.md`** for details.
+4. Run **`npm install`** locally inside `web/` before pushing if you add dependencies.
 
 The original **C# / ASP.NET** app remains in **`ShopWeb/`** for local development and coursework Part 2 (ML.NET notebook).
 
